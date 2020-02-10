@@ -20,7 +20,7 @@ function createMap(earthquakes) {
     };
 
     var overlayMaps = {
-        "Earthquakes": earthquakes
+        "Earthquakes": earthquakes,
     };
 
     var map = L.map("map", {

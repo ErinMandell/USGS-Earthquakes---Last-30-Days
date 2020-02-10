@@ -1,37 +1,43 @@
-function createMap(earthquakes) {
+
  
-    var streetmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        maxZoom: 18,
-        id: "mapbox.streets",
-        accessToken: API_KEY
-    });
+var streetmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "mapbox.streets",
+    accessToken: API_KEY
+});
 
-    var satellite = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
-        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-        maxZoom: 18,
-        id: "mapbox.satellite",
-        accessToken: API_KEY
-    });
+var satellite = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
+    attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+    maxZoom: 18,
+    id: "mapbox.satellite",
+    accessToken: API_KEY
+});
 
-    var baseMaps = {
-        "Street Map": streetmap,
-        "Satellite Map": satellite
-    };
+var baseMaps = {
+    "Street Map": streetmap,
+    "Satellite Map": satellite
+};
 
-    var overlayMaps = {
-        "Earthquakes": earthquakes
-    };
+var layers = {
+    earthquakes: new L.LayerGroup(),
+    plates: new L.LayerGroup()
+};
 
-    var map = L.map("map", {
-        center: [32.09, -0.71],
-        zoom: 3,
-        layers: [streetmap, earthquakes]
-    });
+var overlayMaps = {
+    "Earthquakes": layers.earthquakes,
+    "Tectonic Plates": layers.plates
+};
+
+var map = L.map("map", {
+    center: [32.09, -0.71],
+    zoom: 3,
+    layers: [satellite, layers.earthquakes]
+});
     
-    L.control.layers(baseMaps, overlayMaps, {
-        collapsed: false
-    }).addTo(map);
+L.control.layers(baseMaps, overlayMaps, {
+    collapsed: false
+}).addTo(map);
 
 
 
@@ -50,11 +56,14 @@ function createMap(earthquakes) {
 
     // info.addTo(map)
 
-}
 
 
+    
+var queryUrlPartial = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"
+var queryUrlWeekly = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
+var queryUrlFull = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
 
-function createMarkers(response) {
+d3.json(queryUrlWeekly, function(response) {
     // console.log(response);
 
     var earthquakeInfo = response.features;
@@ -93,63 +102,29 @@ function createMarkers(response) {
           });
 
         newCircle
-        .bindPopup("<h3>" + earthquakeInfo[i].properties.place + "<hr>Magnitude: " + earthquakeInfo[i].properties.mag +
+            .addTo(layers.earthquakes)
+            .bindPopup("<h3>" + earthquakeInfo[i].properties.place + "<hr>Magnitude: " + earthquakeInfo[i].properties.mag +
         "</h3><p>" + new Date(earthquakeInfo[i].properties.time) + "</p>");
-
-        earthquakeMarkers.push(newCircle);
-        // console.log(earthquakeMarkers);
-
-
-
     }
-    
-    function getColor(mag) {
-        console.log(mag);
-        return  mag < 1 ? "#ffffcc":
-                mag < 2 ? "#ffd700":
-                mag < 3 ? "#ffa500":
-                mag < 4 ? "#ff8c00":
-                mag < 5? "#ff6347":
-                        "#ff0000";
-                break;
-    }
+});
 
 
-    // var legend = L.control({position: 'bottomleft'});
+var geoData = "static/data/PB2002_plates.json";
 
-    // legend.onAdd = function() 
-    // {
-    //     var div = L.DomUtil.create('dev', 'info legend');
-    //     var mag = [0, 1, 2, 3, 4, 5];
-    //     var colors = ["#ffffcc", "#ffd700", "#ffa500", "#ff8c00", "#ff6347", "#ff0000"];
-    //     var labels = [];
+d3.json(geoData, function(platesData) {
+    console.log(platesData);
 
-    //     var legendInfo = "<h1>Magnitude Scale</h1>" +
-    //         "<div class=\"labels\">" +
-    //         "<div class=\""
-
-    //     for (var i = 0; i < mag.length; i++) 
-    //     {
-    //         div.innerHTML +=
-    //         '<i style="background:' + getColor(mag[i] + 1) + '"></i> ' +
-    //         mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
-    //     }
-
-    //     return div;
-    // };
-
-    // legend.addTo(map);
-
-    createMap(L.layerGroup(earthquakeMarkers));
-    
-}
-
-
-
-
-var queryUrlPartial = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"
-var queryUrlWeekly = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
-var queryUrlFull = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
-var earthquakeMarkers = [];
-
-d3.json(queryUrlWeekly, createMarkers);
+    L.geoJson(platesData, {
+        style: function(feature) {
+            return {
+                color: "blue",
+                fillColor: "",
+                fillOpacity: 0.0,
+                weight: 1.5
+            };
+        },
+        onEachFeature: function(feature, layer) {
+            layer.bindPopup("<h1>" + feature.properties.PlateName + "</h1>");
+        }
+    }).addTo(layers.plates);
+});
