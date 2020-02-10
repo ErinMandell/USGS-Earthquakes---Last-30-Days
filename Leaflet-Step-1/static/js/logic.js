@@ -115,30 +115,30 @@ function createMarkers(response) {
     }
 
 
-    // var legend = L.control({position: 'bottomleft'});
+    var legend = L.control({position: 'bottomleft'});
 
-    // legend.onAdd = function() 
-    // {
-    //     var div = L.DomUtil.create('dev', 'info legend');
-    //     var mag = [0, 1, 2, 3, 4, 5];
-    //     var colors = ["#ffffcc", "#ffd700", "#ffa500", "#ff8c00", "#ff6347", "#ff0000"];
-    //     var labels = [];
+    legend.onAdd = function() 
+    {
+        var div = L.DomUtil.create('dev', 'info legend');
+        var mag = [0, 1, 2, 3, 4, 5];
+        var colors = ["#ffffcc", "#ffd700", "#ffa500", "#ff8c00", "#ff6347", "#ff0000"];
+        var labels = [];
 
-    //     var legendInfo = "<h1>Magnitude Scale</h1>" +
-    //         "<div class=\"labels\">" +
-    //         "<div class=\""
+        var legendInfo = "<h1>Magnitude Scale</h1>" +
+            "<div class=\"labels\">" +
+            "<div class=\""
 
-    //     for (var i = 0; i < mag.length; i++) 
-    //     {
-    //         div.innerHTML +=
-    //         '<i style="background:' + getColor(mag[i] + 1) + '"></i> ' +
-    //         mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
-    //     }
+        for (var i = 0; i < mag.length; i++) 
+        {
+            div.innerHTML +=
+            '<i style="background:' + getColor(mag[i] + 1) + '"></i> ' +
+            mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
+        }
 
-    //     return div;
-    // };
+        return div;
+    };
 
-    // legend.addTo(map);
+    legend.addTo(map);
 
     createMap(L.layerGroup(earthquakeMarkers));
     
