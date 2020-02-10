@@ -26,7 +26,7 @@ function createMap(earthquakes) {
     var map = L.map("map", {
         center: [32.09, -0.71],
         zoom: 3,
-        layers: [satellite, earthquakes]
+        layers: [streetmap, earthquakes]
     });
     
     L.control.layers(baseMaps, overlayMaps, {
