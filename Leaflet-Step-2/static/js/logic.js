@@ -1,6 +1,7 @@
-// *********************************************************
-// Create Map with basemaps and overlay maps
-// *********************************************************
+// *******************************************************************
+// *******************************************************************
+// ******  CREATE BASE MAP with TILE LAYERS and LAYER GROUPS  ******
+// *******************************************************************
  
 var streetmap = L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}", {
     attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
@@ -25,8 +26,7 @@ var layers = {
     earthquakesDaily: new L.LayerGroup(),
     earthquakesWeekly: new L.LayerGroup(),
     earthquakesMonthly: new L.LayerGroup(),
-    plates: new L.LayerGroup(),
-    legend: new L.LayerGroup()
+    plates: new L.LayerGroup()
 };
 
 var overlayMaps = {
@@ -39,7 +39,7 @@ var overlayMaps = {
 var map = L.map("map", {
     center: [32.09, -0.71],
     zoom: 3,
-    layers: [satellite, layers.earthquakesWeekly, layers.legend]
+    layers: [satellite, layers.earthquakesWeekly]
 });
     
 L.control.layers(baseMaps, overlayMaps, {
@@ -48,9 +48,11 @@ L.control.layers(baseMaps, overlayMaps, {
 
 
 
-
 // ************************************************************************
-//   set URLs for links to 3 earthquake data sets
+// ************************************************************************
+// *******           CREATE OVERLAY MAPS       ****************************
+// ************************************************************************
+//        set URLs for links to 3 earthquake data sets
 // *************************************************************************
     
 var queryUrlDaily = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"
@@ -58,8 +60,8 @@ var queryUrlWeekly = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/
 var queryUrlMonthly = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
 
 
-// **************************************************************
-// *****  Earthquake Data for past 24 hours ********************
+// ***********************************************************************
+// *****       Earthquake Data for past 24 hours      ********************
 
 d3.json(queryUrlDaily, function(response) {
     // console.log(response);
@@ -108,8 +110,8 @@ d3.json(queryUrlDaily, function(response) {
 
 
 
-// **********************************************************
-// *****  Earthquake Data for past 7 days *******************
+// ******************************************************************
+// *****      Earthquake Data for past 7 days     *******************
 
 d3.json(queryUrlWeekly, function(response) {
     // console.log(response);
@@ -157,8 +159,8 @@ d3.json(queryUrlWeekly, function(response) {
 });
 
 
-// **********************************************************
-// *****  Earthquake Data for past 30 days *******************
+// ******************************************************************
+// *****      Earthquake Data for past 30 days    *******************
 
 d3.json(queryUrlMonthly, function(response) {
     // console.log(response);
@@ -207,7 +209,8 @@ d3.json(queryUrlMonthly, function(response) {
 
 
 // ********************************************************************
-// ADD Tecotonic Plates layer, with popup for plate name
+// ********************************************************************
+//       ADD Tecotonic Plates layer, with popups for Plate Names
 // ********************************************************************
 
 var geoData = "static/data/PB2002_plates.json";
@@ -231,19 +234,19 @@ d3.json(geoData, function(platesData) {
 });
 
 
-
-// *********************************************************
-// ATTEMPT to add Legend, which is not going well :(
-// *********************************************************
+// ******************************************************************
+// ******************************************************************
+// *******     ADD Legend for earthquake Magnitude Levels    ******** 
+// *******************************************************************
 
 function getColor(mag) {
     console.log(mag);
-    return  mag < 1 ? "#ffffcc":
-            mag < 2 ? "#ffd700":
+    return  mag < 1 ? "#7cfc00":
+            mag < 2 ? "#ffff99":
             mag < 3 ? "#ffa500":
             mag < 4 ? "#ff8c00":
             mag < 5? "#ff6347":
-                    "#ff0000";
+                    "#cc3399";
 }
 
 
@@ -260,7 +263,7 @@ legend.onAdd = function(map) {
         to = grades[i+1];
 
         labels.push(
-            '<i style="background:' + getColor(from + 1) + '"></i> ' +
+            '<i style="background-color: ' + getColor(from) + '"></i> ' +
             from + (to ? '&ndash;' + to : '+'));
         }
         div.innerHTML = labels.join('<br>');

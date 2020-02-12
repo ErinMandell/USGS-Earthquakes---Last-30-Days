@@ -35,21 +35,38 @@ function createMap(earthquakes) {
 
 
 
-    // Create a legend to display information about our map
-    // When the layer control is added, insert a div with the class of "legend"
-    // Add the info legend to the map
-    
-    // var info = L.control({
-    //     position: "bottomleft"
-    // });
-  
-    // info.onAdd = function() {
-    //     var div = L.DomUtil.create("div", "legend");
-    //     return div;
-    // };
+    function getColor(mag) {
+        console.log(mag);
+        return  mag < 1 ? "#7cfc00":
+                mag < 2 ? "#ffff99":
+                mag < 3 ? "#ffa500":
+                mag < 4 ? "#ff8c00":
+                mag < 5? "#ff6347":
+                        "#cc3399";
+    }
 
-    // info.addTo(map)
 
+    var legend = L.control({position: 'bottomleft'});
+
+    legend.onAdd = function() {
+        var div = L.DomUtil.create('div', 'info legend'),
+            grades = [0, 1, 2, 3, 4, 5],
+            labels = ['<strong> MAGNITUDE </strong>'],
+            from, to;
+
+        for (var i = 0; i < grades.length; i++) {
+            from = grades[i];
+            to = grades[i+1];
+
+            labels.push(
+                '<i style="background:' + getColor(from) + '"></i> ' +
+                from + (to ? '&ndash;' + to : '+ <br>'));
+            }
+            div.innerHTML = labels.join('<br>');
+            return div;
+    };
+
+    legend.addTo(map);
 }
 
 
@@ -88,8 +105,8 @@ function createMarkers(response) {
         var newCircle = L.circle(location, {
             fillOpacity: .50,
             color: color,
-            // radius: earthquakeInfo[i].properties.mag * 30000
-            radius: 30000
+            radius: earthquakeInfo[i].properties.mag * 30000
+            // radius: 30000
           });
 
         newCircle
@@ -98,53 +115,9 @@ function createMarkers(response) {
 
         earthquakeMarkers.push(newCircle);
         // console.log(earthquakeMarkers);
-
-
-
     }
-    
-    function getColor(mag) {
-        console.log(mag);
-        return  mag < 1 ? "#ffffcc":
-                mag < 2 ? "#ffd700":
-                mag < 3 ? "#ffa500":
-                mag < 4 ? "#ff8c00":
-                mag < 5? "#ff6347":
-                        "#ff0000";
-                break;
-    }
-
-
-    var legend = L.control({position: 'bottomleft'});
-
-    legend.onAdd = function() 
-    {
-        var div = L.DomUtil.create('dev', 'info legend');
-        var mag = [0, 1, 2, 3, 4, 5];
-        var colors = ["#ffffcc", "#ffd700", "#ffa500", "#ff8c00", "#ff6347", "#ff0000"];
-        var labels = [];
-
-        var legendInfo = "<h1>Magnitude Scale</h1>" +
-            "<div class=\"labels\">" +
-            "<div class=\""
-
-        for (var i = 0; i < mag.length; i++) 
-        {
-            div.innerHTML +=
-            '<i style="background:' + getColor(mag[i] + 1) + '"></i> ' +
-            mag[i] + (mag[i + 1] ? '&ndash;' + mag[i + 1] + '<br>' : '+');
-        }
-
-        return div;
-    };
-
-    legend.addTo(map);
-
     createMap(L.layerGroup(earthquakeMarkers));
-    
 }
-
-
 
 
 var queryUrlPartial = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"

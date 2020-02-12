@@ -11,17 +11,20 @@ html {
 
 .legend {
   line-height: 18px;
+  border-radius: 15px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-bottom: 5px;
   color: #555;
-  z-index: 1000;
-  position: relative;
+  background-color: ghostwhite;
 }
 
-.legend {
-  width: 18px;
-  height: 18px;
+.legend i {
+  width: 10px;
+  height: 15px;
   float: left;
-  margin-right: 8px;
-  opacity: .7;
-  z-index: 1000;
-  position: relative;
+  margin-right: 10px;
+  margin-left: 10px;
+  padding-left: 15px;
+  opacity: 1;
 }
